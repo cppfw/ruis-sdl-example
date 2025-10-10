@@ -342,37 +342,51 @@ int main( int argc, char* args[] ) {
 		return 1;
 	}
 	
+	auto rendering_context = utki::make_shared<ruis::render::opengl::context>(
+		utki::make_shared<ruis::render::native_window>()
+	);
+
+	auto common_render_objects = utki::make_shared<ruis::render::renderer::objects>(rendering_context);
+	auto common_shaders = rendering_context.get().make_shaders();
+
+	auto ruis_resource_loader = utki::make_shared<ruis::resource_loader>(
+		rendering_context, //
+		common_render_objects
+	);
+
+	auto ruis_style_provider = utki::make_shared<ruis::style_provider>(std::move(ruis_resource_loader));
+
 	// create ruis gui singleton
 	ruis::gui gui(
 		utki::make_shared<ruis::context>(
-			utki::make_shared<ruis::style_provider>(
-				utki::make_shared<ruis::resource_loader>(
-					utki::make_shared<ruis::render::renderer>(
-						utki::make_shared<ruis::render::opengl::context>()
-					)
-				)
-			),
-			utki::make_shared<ruis::updater>(),
 			ruis::context::parameters{
-				.post_to_ui_thread_function = [userEventType](std::function<void()> f){
-					SDL_Event e;
-					SDL_memset(&e, 0, sizeof(e));
-					e.type = userEventType;
-					e.user.code = 0;
-					e.user.data1 = new std::function<void()>(std::move(f));
-					e.user.data2 = 0;
-					SDL_PushEvent(&e);
-				},
-				.set_mouse_cursor_function = [](ruis::mouse_cursor){},
+				.post_to_ui_thread_function =
+					[userEventType](std::function<void()> procedure) {
+						auto f = new std::function<void()>(std::move(procedure));
+						SDL_Event e;
+						SDL_zero(e);
+						e.type = userEventType;
+						e.user.data1 = reinterpret_cast<void*>(f);
+						if(SDL_PushEvent(&e) < 0){
+							delete f;
+						}
+					},
+				.updater = utki::make_shared<ruis::updater>(),
+				.renderer = utki::make_shared<ruis::render::renderer>(
+					rendering_context,
+					common_shaders,
+					common_render_objects
+				),
+				.style_provider = std::move(ruis_style_provider),
 				.units = ruis::units(96, 1)
 			}
 		)
 	);
 	
-	gui.set_viewport(ruis::vector2(ruis::real(width), ruis::real(height)));
-	gui.context.get().ren().render_context.get().set_viewport(
-		{{0, 0}, {unsigned(width), unsigned(height)}}
-	);
+	gui.set_viewport(ruis::rect{
+		{0,0},
+		ruis::vector2(ruis::real(width), ruis::real(height))
+	});
 	
 	papki::fs_file fi;
 
@@ -401,7 +415,7 @@ int main( int argc, char* args[] ) {
 		gui.set_root(c);
 
 		auto textLabel = c.get().try_get_widget_as<ruis::text>("info_text");
-		ASSERT(textLabel)
+		utki::assert(textLabel, SL);
 
 		auto button = c.get().try_get_widget_as<ruis::push_button>("hw_button");
 
@@ -432,7 +446,7 @@ int main( int argc, char* args[] ) {
 	});
 
 	for(bool quit = false; !quit;) { 
-		if(SDL_WaitEventTimeout(nullptr, gui.update()) == 1){
+		if(SDL_WaitEventTimeout(nullptr, gui.context.get().updater.get().update()) == 1){
 			SDL_Event e;
 			while( SDL_PollEvent( &e ) != 0 ) { 
 				if( e.type == SDL_QUIT ) { 
@@ -446,11 +460,9 @@ int main( int argc, char* args[] ) {
 							width = e.window.data1;
 							height = e.window.data2;
 							// std::cout << "w = " << e.window.data1 << " h = " << e.window.data2 << std::endl;
-							gui.set_viewport(ruis::vector2(ruis::real(width), ruis::real(height)));
-							gui.context.get().ren().render_context.get().set_viewport(
-								{{0, 0}, {unsigned(width), unsigned(height)}}
+							gui.set_viewport(
+								{{0, 0}, ruis::vector2(ruis::real(width), ruis::real(height))}
 							);
-							// glViewport(0, 0, width, height);
 							break;
 						case SDL_WINDOWEVENT_ENTER:
 							gui.send_mouse_hover(true, 0);
@@ -504,8 +516,8 @@ int main( int argc, char* args[] ) {
 			}
 		}
 
-		gui.context.get().ren().render_context.get().clear_framebuffer_color();
-		gui.render(gui.context.get().ren().render_context.get().initial_matrix);
+		gui.context.get().ren().rendering_context.get().clear_framebuffer_color();
+		gui.render(gui.context.get().ren().rendering_context.get().initial_matrix);
 		
 		SDL_GL_SwapWindow(window); 
 	} 
