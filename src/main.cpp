@@ -8,7 +8,7 @@
 
 #include <GL/glew.h>
 
-#include <papki/fs_file.hpp>
+#include <fsif/native_file.hpp>
 
 #include <utki/unicode.hpp>
 
@@ -388,7 +388,7 @@ int main( int argc, char* args[] ) {
 		ruis::vector2(ruis::real(width), ruis::real(height))
 	});
 	
-	papki::fs_file fi;
+	fsif::native_file fi;
 
 	gui.init_standard_widgets(fi);
 	
