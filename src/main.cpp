@@ -385,7 +385,7 @@ int main( int argc, char* args[] ) {
 	
 	gui.set_viewport(ruis::rect{
 		{0,0},
-		ruis::vector2(ruis::real(width), ruis::real(height))
+		{ruis::real(width), ruis::real(height)}
 	});
 	
 	fsif::native_file fi;
@@ -461,7 +461,10 @@ int main( int argc, char* args[] ) {
 							height = e.window.data2;
 							// std::cout << "w = " << e.window.data1 << " h = " << e.window.data2 << std::endl;
 							gui.set_viewport(
-								{{0, 0}, ruis::vector2(ruis::real(width), ruis::real(height))}
+								{
+									{0, 0}, //
+									{ruis::real(width), ruis::real(height)}
+								}
 							);
 							break;
 						case SDL_WINDOWEVENT_ENTER:
@@ -475,20 +478,23 @@ int main( int argc, char* args[] ) {
 					int x = 0, y = 0;
 					SDL_GetMouseState(&x, &y);
 
-					gui.send_mouse_move(ruis::vector2(ruis::real(x), ruis::real(y)), 0);
+					gui.send_mouse_move({ruis::real(x), ruis::real(y)}, 0);
 				}else if(e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP){
 					int x = 0, y = 0;
 					SDL_GetMouseState(&x, &y);
 
 					gui.send_mouse_button(
-							e.button.type == SDL_MOUSEBUTTONDOWN,
-							ruis::vector2(ruis::real(x), ruis::real(y)),
+							e.button.type == SDL_MOUSEBUTTONDOWN ? ruis::button_action::press : ruis::button_action::release,
+							{ruis::real(x), ruis::real(y)},
 							e.button.button == 1 ? ruis::mouse_button::left : ruis::mouse_button::right,
 							0
 						);
 				}else if(e.type == SDL_KEYDOWN || e.type == SDL_KEYUP){
 					if(e.key.repeat == 0){
-						gui.send_key(e.key.type == SDL_KEYDOWN, sdl_scan_code_to_ruis_key(e.key.keysym.scancode));
+						gui.send_key(
+							e.key.type == SDL_KEYDOWN ? ruis::button_action::press : ruis::button_action::release,
+							sdl_scan_code_to_ruis_key(e.key.keysym.scancode)
+						);
 					}
 					if(e.type == SDL_KEYDOWN){
 						struct SDLUnicodeDummyProvider : public ruis::gui::input_string_provider{
