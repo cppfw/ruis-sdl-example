@@ -43,7 +43,7 @@ utki::shared_ref<ruis::widget> make_root_widget(const utki::shared_ref<ruis::con
                     ),
                     m::nine_patch_text_field(c,
                         {
-                            .layout{
+                            .layout_params{
                                 .dims{200_pp, ruis::dim::min}
                             },
                             .widget{
