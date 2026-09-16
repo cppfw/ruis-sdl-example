@@ -14,6 +14,7 @@
 
 #include <ruis/gui.hpp>
 #include <ruis/render/opengl/context.hpp>
+#include <ruis/standard_widgets.hpp>
 #include <ruis/widget/label/text.hpp>
 #include <ruis/widget/button/push_button.hpp>
 #include <ruis/widget/label/rectangle.hpp>
@@ -390,7 +391,7 @@ int main( int argc, char* args[] ) {
 	
 	fsif::native_file fi;
 
-	gui.init_standard_widgets(fi);
+	ruis::init_standard_widgets(gui.context, fi);
 	
 	{
 		// namespace m = ruis::make;
@@ -406,9 +407,8 @@ int main( int argc, char* args[] ) {
 	}
 
 	
-	// Inflate widgets hierarchy from GUI description script and set it up
+	// set it up GUI widget structure
 	{
-		fi.set_path("res/main.gui");
 		auto c = make_root_widget(gui.context);
 
 		// set the widgets hierarchy to the application

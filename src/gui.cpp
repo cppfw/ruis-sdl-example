@@ -1,9 +1,8 @@
 #include "gui.hpp"
 
 #include <ruis/widget/button/push_button.hpp>
+#include <ruis/widget/input/impl/nine_patch_text_field.hpp>
 #include <ruis/widget/label/text.hpp>
-#include <ruis/widget/input/text_input_line.hpp>
-#include <ruis/widget/label/nine_patch.hpp>
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -23,7 +22,7 @@ utki::shared_ref<ruis::widget> make_root_widget(const utki::shared_ref<ruis::con
                 {
                     m::push_button(c,
                         {
-                            .widget_params{
+                            .widget{
                                 .id = "hw_button"s // we can find this label by id from code
                             }
                         },
@@ -36,34 +35,22 @@ utki::shared_ref<ruis::widget> make_root_widget(const utki::shared_ref<ruis::con
                     ),
                     m::text(c,
                         {
-                            .widget_params{
+                            .widget{
                                 .id = "info_text"s // we can find this label by id from code
                             }
                         },
                         U"Information"s
                     ),
-                    m::nine_patch(c,
+                    m::nine_patch_text_field(c,
                         {
-                            .layout_params{
-                                .dims{ruis::dim::max, ruis::dim::min}
+                            .layout{
+                                .dims{200_pp, ruis::dim::min}
                             },
-                            .widget_params{
+                            .widget{
                                 .id = "text_input"s
-                            },
-                            .nine_patch_params{
-                                .nine_patch = c.get().loader().load<ruis::res::nine_patch>("ruis_npt_textfield_background"sv)
                             }
                         },
-                        {
-                            m::text_input_line(c,
-                                {
-                                    .layout_params{
-                                        .dims = {200_pp, ruis::dim::min}
-                                    }
-                                },
-                                U"enter text here"s
-                            )
-                        }
+                        U"enter text here"s
                     )
                 }
             )

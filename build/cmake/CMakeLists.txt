@@ -34,11 +34,10 @@ myci_add_source_files(srcs
 myci_declare_application(${PROJECT_NAME}-opengl
     SOURCES
         ${srcs}
-    RESOURCE_DIRECTORY
-        ../../res
     INCLUDE_DIRECTORIES
         ../../src
     DEPENDENCIES
+        SDL2
         ruisapp::ruisapp-opengl
 )
 
