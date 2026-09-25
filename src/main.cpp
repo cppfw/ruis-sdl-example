@@ -428,9 +428,9 @@ int main( int argc, char* args[] ) {
 			if(auto tl = textLabelWeak.lock()){
 				even = !even;
 				if(even){
-					tl->set_text("even");
+					tl->set_string("even");
 				}else{
-					tl->set_text("odd");
+					tl->set_string("odd");
 				}
 			}
 			b.context.get().post_to_ui_thread([](){
