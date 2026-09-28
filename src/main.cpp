@@ -382,7 +382,10 @@ int main(int argc, char* args[])
 
 	fsif::native_file fi;
 
-	ruis::mount_ruis_res_pack(gui.context, fi);
+	ruis::mount_ruis_res_pack(
+		gui.ctx().loader(), //
+		fi
+	);
 
 	{
 		// namespace m = ruis::make;
