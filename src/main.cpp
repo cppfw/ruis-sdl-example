@@ -10,7 +10,6 @@
 #include <fsif/native_file.hpp>
 #include <ruis/gui.hpp>
 #include <ruis/render/opengl/context.hpp>
-#include <ruis/standard_resources.hpp>
 #include <ruis/widget/button/push_button.hpp>
 #include <ruis/widget/label/rectangle.hpp>
 #include <ruis/widget/label/text.hpp>
@@ -382,10 +381,7 @@ int main(int argc, char* args[])
 
 	fsif::native_file fi;
 
-	ruis::mount_ruis_res_pack(
-		gui.ctx().loader(), //
-		fi
-	);
+	gui.ctx().loader().mount_ruis_res_pack(fi);
 
 	{
 		// namespace m = ruis::make;
