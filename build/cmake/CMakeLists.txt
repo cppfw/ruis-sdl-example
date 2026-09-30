@@ -31,14 +31,20 @@ myci_add_source_files(srcs
 #         --window
 # )
 
-myci_declare_application(${PROJECT_NAME}-opengl
+if(IOS)
+    set(gl_backend opengles)
+else()
+    set(gl_backend opengl)
+endif()
+
+myci_declare_application(${PROJECT_NAME}-${gl_backend}
     SOURCES
         ${srcs}
     INCLUDE_DIRECTORIES
         ../../src
     DEPENDENCIES
         SDL2
-        ruis-render-opengl::ruis-render-opengl
+        ruis-render-opengl::ruis-render-${gl_backend}
 )
 
 # set(test_srcs)
