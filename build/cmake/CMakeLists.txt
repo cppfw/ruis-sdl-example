@@ -38,7 +38,7 @@ myci_declare_application(${PROJECT_NAME}-opengl
         ../../src
     DEPENDENCIES
         SDL2
-        ruisapp::ruisapp-opengl
+        ruis-render-opengl::ruis-render-opengl
 )
 
 # set(test_srcs)
