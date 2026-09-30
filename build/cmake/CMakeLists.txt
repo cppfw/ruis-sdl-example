@@ -31,28 +31,24 @@ myci_add_source_files(srcs
 #         --window
 # )
 
-if(IOS)
-    set(gl_backend opengles)
-else()
-    set(gl_backend opengl)
-endif()
-
 if(WIN32)
     set(sdl_main SDL2main)
 else()
     set(sdl_main)
 endif()
 
-myci_declare_application(${PROJECT_NAME}-${gl_backend}
-    SOURCES
-        ${srcs}
-    INCLUDE_DIRECTORIES
-        ../../src
-    DEPENDENCIES
-        SDL2
-        ${sdl_main}
-        ruis-render-${gl_backend}::ruis-render-${gl_backend}
-)
+if(NOT IOS)
+    myci_declare_application(${PROJECT_NAME}-opengl
+        SOURCES
+            ${srcs}
+        INCLUDE_DIRECTORIES
+            ../../src
+        DEPENDENCIES
+            SDL2
+            ${sdl_main}
+            ruis-render-opengl::ruis-render-opengl
+    )
+endif()
 
 # set(test_srcs)
 # myci_add_source_files(test_srcs
