@@ -37,6 +37,12 @@ else()
     set(gl_backend opengl)
 endif()
 
+if(WIN32)
+    set(sdl_main SDL2main)
+else()
+    set(sdl_main)
+endif()
+
 myci_declare_application(${PROJECT_NAME}-${gl_backend}
     SOURCES
         ${srcs}
@@ -44,6 +50,7 @@ myci_declare_application(${PROJECT_NAME}-${gl_backend}
         ../../src
     DEPENDENCIES
         SDL2
+        ${sdl_main}
         ruis-render-${gl_backend}::ruis-render-${gl_backend}
 )
 
