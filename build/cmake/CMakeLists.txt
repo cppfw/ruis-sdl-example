@@ -44,7 +44,7 @@ myci_declare_application(${PROJECT_NAME}-${gl_backend}
         ../../src
     DEPENDENCIES
         SDL2
-        ruis-render-opengl::ruis-render-${gl_backend}
+        ruis-render-${gl_backend}::ruis-render-${gl_backend}
 )
 
 # set(test_srcs)
