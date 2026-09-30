@@ -31,12 +31,6 @@ myci_add_source_files(srcs
 #         --window
 # )
 
-if(WIN32)
-    set(sdl_main SDL2main)
-else()
-    set(sdl_main)
-endif()
-
 if(NOT IOS)
     myci_declare_application(${PROJECT_NAME}-opengl
         SOURCES
@@ -45,8 +39,9 @@ if(NOT IOS)
             ../../src
         DEPENDENCIES
             SDL2
-            ${sdl_main}
             ruis-render-opengl::ruis-render-opengl
+        WINDOWS_ONLY_DEPENDENCIES
+            SDL2::SDL2main
     )
 endif()
 
