@@ -10,6 +10,7 @@
 #include <fsif/native_file.hpp>
 #include <ruis/gui.hpp>
 #include <ruis/render/opengl/context.hpp>
+#include <ruis/render/opengl/factory.hpp>
 #include <ruis/widget/button/push_button.hpp>
 #include <ruis/widget/label/rectangle.hpp>
 #include <ruis/widget/label/text.hpp>
@@ -357,14 +358,15 @@ int main(int argc, char* args[])
 		return 1;
 	}
 
-	auto rendering_context =
-		utki::make_shared<ruis::render::opengl::context>(utki::make_shared<ruis::render::native_window>());
+	auto render_native_window = utki::make_shared<ruis::render::native_window>();
+	auto rendering_factory = utki::make_shared<ruis::render::opengl::factory>(render_native_window);
+	auto rendering_context = utki::make_shared<ruis::render::opengl::context>(render_native_window, rendering_factory);
 
-	auto common_render_objects = utki::make_shared<ruis::render::renderer::objects>(rendering_context);
-	auto common_shaders = rendering_context.get().make_shaders();
+	auto common_render_objects = utki::make_shared<ruis::render::renderer::objects>(rendering_factory.get());
+	auto common_shaders = rendering_factory.get().make_shaders();
 
 	auto ruis_resource_loader = utki::make_shared<ruis::resource_loader>(
-		rendering_context, //
+		rendering_factory, //
 		common_render_objects
 	);
 
